@@ -9,8 +9,11 @@ public class App {
     private static final Scanner scanner = new Scanner(System.in);
 
     public void startMenu() {
-        var option = selectOption();
-        switchByOption(option);
+        var showMenu = true;
+        while (showMenu) {
+            var option = selectOption();
+            showMenu = switchByOption(option);
+        }
     }
     private int selectOption() {
         var menu  = """
@@ -23,22 +26,23 @@ public class App {
         printer.println(menu);
         return scanner.nextInt();
     }
-    private void switchByOption(int option) {
+    private boolean switchByOption(int option) {
         switch (option) {
             case 1:
                 registerArtist();
                 break;
-            case 2:
-                leave();
-                break;
+            case 0:
+                return leave();
             default:
                 printer.println("Invalid option!!");
         }
+        return true;
     }
     private void registerArtist() {
         //register artist
     }
-    private void leave() {
-        //leave
+    private boolean leave() {
+        printer.println("leaving....");
+        return false;
     }
 }
