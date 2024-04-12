@@ -1,19 +1,22 @@
 package com.felipe.training.springmusic;
 
+import com.felipe.training.springmusic.model.Artist;
+import com.felipe.training.springmusic.repository.ArtistRepository;
+
 import java.io.PrintStream;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 public class App {
 
     private static final PrintStream printer = System.out;
     private static final Scanner scanner = new Scanner(System.in);
+    private final ArtistRepository repository;
+
+    public App(ArtistRepository repository) {this.repository = repository;}
 
     public void startMenu() {
-        var showMenu = true;
-        while (showMenu) {
-            var option = selectOption();
-            showMenu = switchByOption(option);
-        }
+        switchByOption(selectOption());
     }
     private int selectOption() {
         var menu  = """
@@ -24,25 +27,29 @@ public class App {
                 0 - Leave.
                 """;
         printer.println(menu);
-        return scanner.nextInt();
+        var option = scanner.nextInt();
+        scanner.nextLine();
+        return option;
     }
-    private boolean switchByOption(int option) {
+    private void switchByOption(int option) {
         switch (option) {
             case 1:
                 registerArtist();
                 break;
             case 0:
-                return leave();
+                leave();
+                break;
             default:
                 printer.println("Invalid option!!");
         }
-        return true;
     }
     private void registerArtist() {
-        //register artist
+        printer.println("Insert the artist name:");
+        var name = scanner.nextLine();
+        Artist artist = new Artist(name);
+        repository.save(artist);
     }
-    private boolean leave() {
+    private void leave() {
         printer.println("leaving....");
-        return false;
     }
 }
