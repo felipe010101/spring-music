@@ -2,9 +2,11 @@ package com.felipe.training.springmusic;
 
 import com.felipe.training.springmusic.model.Artist;
 import com.felipe.training.springmusic.model.ArtistType;
+import com.felipe.training.springmusic.model.Music;
 import com.felipe.training.springmusic.repository.ArtistRepository;
 
 import java.io.PrintStream;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class App {
@@ -60,7 +62,23 @@ public class App {
         artist.setType(ArtistType.valueOf(type.toUpperCase()));
         repository.save(artist);
     }
-    private void registerMusic() {}
+    private void registerMusic() {
+        printer.println("Register music from what artist?");
+        var artistName = scanner.nextLine();
+        Optional<Artist> artist = repository.findByNameContainingIgnoreCase(artistName);
+        if (artist.isPresent()) {
+            printer.println("Insert the music name:");
+            var musicName = scanner.nextLine();
+            Music music = new Music();
+            music.setTitle(musicName);
+            music.setArtist(artist.get());
+            artist.get().getMusics().add(music);
+            repository.save(artist.get());
+        } else {
+            printer.println("Artist not founded on database, try to register first ;)");
+        }
+
+    }
     private boolean leave() {
         printer.println("leaving....");
         return false;
