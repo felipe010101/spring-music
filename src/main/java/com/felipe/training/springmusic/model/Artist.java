@@ -19,9 +19,6 @@ public class Artist {
     private List<Music> musics = new ArrayList<>();
 
     public Artist() {}
-    public Artist(String name) {
-        this.name = name;
-    }
 
     public Long getId() {
         return id;
