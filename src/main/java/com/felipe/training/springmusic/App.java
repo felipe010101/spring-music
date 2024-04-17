@@ -6,6 +6,7 @@ import com.felipe.training.springmusic.model.Music;
 import com.felipe.training.springmusic.repository.ArtistRepository;
 
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -27,7 +28,9 @@ public class App {
         var menu  = """
                 ***Spring Music App***
                 
-                1 - Register Artists.
+                1 - Register an Artist.
+                2 - Register a Music.
+                3 - List all artists;
                 
                 0 - Leave.
                 """;
@@ -43,6 +46,9 @@ public class App {
                 break;
             case 2:
                 registerMusic();
+                break;
+            case 3:
+                listArtists();
                 break;
             case 0:
                 return leave();
@@ -67,17 +73,23 @@ public class App {
         var artistName = scanner.nextLine();
         Optional<Artist> artist = repository.findByNameContainingIgnoreCase(artistName);
         if (artist.isPresent()) {
+            Artist foundedArtist = artist.get();
             printer.println("Insert the music name:");
             var musicName = scanner.nextLine();
             Music music = new Music();
             music.setTitle(musicName);
-            music.setArtist(artist.get());
-            artist.get().getMusics().add(music);
-            repository.save(artist.get());
+            music.setArtist(foundedArtist);
+            List<Music> musicList = foundedArtist.getMusics();
+            musicList.add(music);
+            foundedArtist.setMusics(musicList);
+            repository.save(foundedArtist);
         } else {
             printer.println("Artist not founded on database, try to register first ;)");
         }
-
+    }
+    private void listArtists() {
+        List<Artist> artistList = repository.findAll();
+        artistList.forEach(printer::println);
     }
     private boolean leave() {
         printer.println("leaving....");
