@@ -1,14 +1,18 @@
 package com.felipe.training.springmusic;
 
+import com.felipe.training.springmusic.dto.ArtistDTO;
+import com.felipe.training.springmusic.dto.MusicDTO;
 import com.felipe.training.springmusic.model.Artist;
 import com.felipe.training.springmusic.model.ArtistType;
 import com.felipe.training.springmusic.model.Music;
 import com.felipe.training.springmusic.repository.ArtistRepository;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class App {
 
@@ -89,7 +93,14 @@ public class App {
     }
     private void listArtists() {
         List<Artist> artistList = repository.findAll();
-        artistList.forEach(printer::println);
+        List<MusicDTO> musicDTOS = artistList.stream()
+                .flatMap(artist -> artist.getMusics()
+                        .stream()
+                        .map(music -> new MusicDTO(music.getId(), music.getTitle()))).toList();
+        List<ArtistDTO> artistDTOS = artistList.stream()
+                        .map(artist -> new ArtistDTO(artist.getId(),artist.getName(),artist.getType(), musicDTOS))
+                                .toList();
+        artistDTOS.forEach(printer::println);
     }
     private boolean leave() {
         printer.println("leaving....");
